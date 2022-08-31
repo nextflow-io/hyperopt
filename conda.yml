@@ -1,0 +1,9 @@
+name: ml-example
+channels:
+  - defaults
+dependencies:
+  - matplotlib
+  - numpy
+  - pandas
+  - python=3.7
+  - scikit-learn
