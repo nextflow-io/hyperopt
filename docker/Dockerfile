@@ -1,11 +1,7 @@
-FROM mambaorg/micromamba
+FROM mambaorg/micromamba:0.25
 MAINTAINER Ben Sherman <bentshermann@gmail.com>
 
+COPY conda.yml .
 RUN \
-   micromamba install -y -n base -c defaults \
-      matplotlib \
-      numpy \
-      pandas \
-      python=3.7 \
-      scikit-learn \
-   && micromamba clean -a -y
+    micromamba install -y -n base -f conda.yml && \
+    micromamba clean -a -y
