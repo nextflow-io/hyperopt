@@ -11,7 +11,11 @@
  * defined by the Mozilla Public License, v. 2.0.
  *
  */
-nextflow.enable.dsl = 2
+
+include { train } from './modules/train'
+include { predict } from './modules/predict'
+include { visualize } from './modules/visualize'
+include { make_dataset } from './modules/make_dataset'
 
 
 log.info """
@@ -83,86 +87,6 @@ workflow {
         ch_predict_inputs = ch_models.combine(ch_predict_datasets, by: 0)
         predict(ch_predict_inputs)
     }
-}
-
-
-process make_dataset {
-    publishDir params.outdir, mode: 'copy'
-
-    output:
-    tuple val('example'), path('example.train.data.txt'), path('example.train.labels.txt'), emit: train_datasets
-    tuple val('example'), path('example.test.data.txt'), path('example.test.labels.txt'), emit: test_datasets
-
-    script:
-    """
-    make-dataset.py \
-        --n-samples  ${params.n_samples} \
-        --n-features ${params.n_features} \
-        --n-classes  ${params.n_classes}
-    """
-}
-
-
-process visualize {
-    publishDir params.outdir, mode: 'copy'
-
-    input:
-    tuple val(dataset_name), path(data_file), path(labels_file)
-
-    output:
-    tuple val(dataset_name), path('*.png'), emit: plots
-
-    script:
-    """
-    visualize.py \
-        --data    ${data_file} \
-        --labels  ${labels_file} \
-        --outfile `basename ${data_file} .txt`.png
-    """
-}
-
-
-process train {
-    publishDir params.outdir, mode: 'copy'
-    tag { "${dataset_name}/${model_type}" }
-
-    input:
-    tuple val(dataset_name), path(data_file), path(labels_file)
-    each model_type
-
-    output:
-    tuple val(dataset_name), val(model_type), path("${dataset_name}.pkl"), emit: models
-
-    script:
-    """
-    train.py \
-        --data       ${data_file} \
-        --labels     ${labels_file} \
-        --scaler     standard \
-        --model-type ${model_type} \
-        --model-name ${dataset_name}.pkl
-    """
-}
-
-
-process predict {
-    publishDir params.outdir, mode: 'copy'
-    tag { "${dataset_name}/${model_type}" }
-
-    input:
-    tuple val(dataset_name), val(model_type), path(model_file), path(data_file), path(labels_file)
-
-    output:
-    tuple val(dataset_name), val(model_type), path("${dataset_name}.predict.${model_type}.log"), emit: logs
-
-    script:
-    """
-    predict.py \
-        --model  ${model_file} \
-        --data   ${data_file} \
-        --labels ${labels_file} \
-        > ${dataset_name}.predict.${model_type}.log
-    """
 }
 
 
