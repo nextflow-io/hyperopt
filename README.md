@@ -13,7 +13,7 @@ A basic pipeline for training, evaluating, and using machine learning models wit
 
 1. Install Docker. Read more [here](https://docs.docker.com/).
 
-2. Install Nextflow (version 20.07.x or higher):
+2. Install Nextflow (version 22.10.x or higher):
     ```bash
     curl -s https://get.nextflow.io | bash
     ```
