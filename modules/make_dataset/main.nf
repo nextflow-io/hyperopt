@@ -1,10 +1,13 @@
 
 process make_dataset {
-    publishDir params.outdir, mode: 'copy'
+    publishDir params.outdir, mode: 'copy', saveAs: { file -> "${dataset_name}.${file}" }
+    tag "${dataset_name}"
+
+    input:
+    val(dataset_name)
 
     output:
-    tuple val('example'), path('example.train.data.txt'), path('example.train.labels.txt'), emit: train_datasets
-    tuple val('example'), path('example.test.data.txt'), path('example.test.labels.txt'), emit: test_datasets
+    tuple val(dataset_name), path('data.txt'), path('labels.txt'), emit: datasets
 
     script:
     """

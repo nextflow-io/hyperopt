@@ -12,16 +12,18 @@
  *
  */
 
+include { make_dataset } from './modules/make_dataset'
+include { split_train_test } from './modules/split_train_test'
+include { visualize } from './modules/visualize'
 include { train } from './modules/train'
 include { predict } from './modules/predict'
-include { visualize } from './modules/visualize'
-include { make_dataset } from './modules/make_dataset'
 
 
 log.info """
     M L - E X A M P L E   P I P E L I N E
     =====================================
     make_dataset    : ${params.make_dataset}
+    dataset_name    : ${params.dataset_name}
     n_samples       : ${params.n_samples}
     n_features      : ${params.n_features}
     n_classes       : ${params.n_classes}
@@ -48,7 +50,9 @@ log.info """
 workflow {
     // create synthetic data if specified
     if ( params.make_dataset == true ) {
-        (ch_train_datasets, ch_predict_datasets) = make_dataset()
+        ch_datasets = make_dataset(params.dataset_name)
+
+        (ch_train_datasets, ch_predict_datasets) = split_train_test(ch_datasets)
     }
 
     // otherwise load input files
@@ -79,7 +83,7 @@ workflow {
     // otherwise load trained model if specified
     else if ( params.predict_model != null ) {
         ch_models = Channel.fromFilePairs(params.predict_model, size: 1, flat: true)
-            | map { [it[0], 'pretrained', it[1]]}
+            | map { [it[0], 'pretrained', it[1]] }
     }
 
     // perform inference if specified
