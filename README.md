@@ -20,7 +20,7 @@ A basic pipeline for training, evaluating, and using machine learning models wit
 
 3. Launch the pipeline:
     ```bash
-    ./nextflow run nextflow-io/ml-example -with-docker
+    ./nextflow run nextflow-io/ml-example -profile conda
     ```
 
 4. When the pipeline completes, you can view the training and prediction results in the `results` folder.
@@ -37,4 +37,4 @@ Visit the [Nextflow documentation](https://www.nextflow.io/docs/latest/executor.
 
 ## Components
 
-ML-Example uses Python (>=3.7) and several Python packages for machine learning and data science. These dependencies can be found in the `conda.yml` file.
+ML-Example uses Python (>=3.10) and several Python packages for machine learning and data science. These dependencies can be found in the `conda.yml` file.
