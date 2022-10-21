@@ -7,30 +7,52 @@ A basic pipeline for training, evaluating, and using machine learning models wit
 
 * Unix-like operating system (Linux, macOS, etc)
 * Java 11
+* [Anaconda](https://www.anaconda.com/products/distribution) or [Docker](https://docs.docker.com/)
 
 
 ## Quickstart
 
-1. Install Docker. Read more [here](https://docs.docker.com/).
-
-2. Install Nextflow (version 22.10.x or higher):
+1. Install Nextflow (version 22.10.x or higher):
     ```bash
     curl -s https://get.nextflow.io | bash
     ```
 
-3. Launch the pipeline:
+2. Launch the pipeline:
     ```bash
+    # use conda natively (requires Anaconda)
     ./nextflow run nextflow-io/ml-example -profile conda
+
+    # use Wave containers (requires Docker and Tower Cloud account)
+    ./nextflow run nextflow-io/ml-example -profile wave
     ```
 
-4. When the pipeline completes, you can view the training and prediction results in the `results` folder.
+3. When the pipeline completes, you can view the training and prediction results in the `results` folder.
 
-Note: the first time you execute the pipeline, Nextflow will take a few minutes to download the pipeline code from this GitHub repository and any associated Docker images.
+Note: the first time you execute the pipeline, Nextflow will take a few minutes to download the pipeline code from this GitHub repository and any related software dependencies (e.g. conda packages or Docker images).
+
+
+## Configuration
+
+The ML-Example pipeline consists of the following steps:
+
+1. Download a dataset
+2. Split the dataset into train/test sets
+3. Visualize the train/test sets
+4. Train a variety of models on the train set
+5. Evaluate each model on the test set
+
+You can control many aspects of this workflow with the `params` scope of the configuration, including:
+
+* Enable/disable each individual step
+* Download a different dataset (default is `iris`, see [OpenML.org](https://www.openml.org/search?type=data&status=active) to view available datasets)
+* Provide your own training data instead of downloading it
+* Provide your own pre-trained model and test data
+* Select different models (see the `train` module for all available options)
 
 
 ## Cluster support
 
-ML-Example execution relies on [Nextflow](http://www.nextflow.io), which provides an abstraction between the pipeline logic and the underlying execution environment. As a result, the pipeline can be executed on a single computer or a HPC cluster without any modifications.
+Since [Nextflow](http://www.nextflow.io) provides an abstraction between the pipeline logic and the underlying execution environment, the ML-Example pipeline can be executed on a single computer or an HPC cluster without any modifications.
 
 Visit the [Nextflow documentation](https://www.nextflow.io/docs/latest/executor.html) to see which HPC schedulers are supported, and how to use them.
 

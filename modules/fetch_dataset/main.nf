@@ -1,5 +1,5 @@
 
-process make_dataset {
+process fetch_dataset {
     publishDir params.outdir, mode: 'copy', saveAs: { file -> "${dataset_name}.${file}" }
     tag "${dataset_name}"
 
@@ -11,9 +11,6 @@ process make_dataset {
 
     script:
     """
-    make-dataset.py \
-        --n-samples  ${params.n_samples} \
-        --n-features ${params.n_features} \
-        --n-classes  ${params.n_classes}
+    fetch-dataset.py --name ${dataset_name}
     """
 }

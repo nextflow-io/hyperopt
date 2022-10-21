@@ -12,7 +12,7 @@
  *
  */
 
-include { make_dataset } from './modules/make_dataset'
+include { fetch_dataset } from './modules/fetch_dataset'
 include { split_train_test } from './modules/split_train_test'
 include { visualize } from './modules/visualize'
 include { train } from './modules/train'
@@ -22,11 +22,8 @@ include { predict } from './modules/predict'
 log.info """
     M L - E X A M P L E   P I P E L I N E
     =====================================
-    make_dataset    : ${params.make_dataset}
+    fetch_dataset   : ${params.fetch_dataset}
     dataset_name    : ${params.dataset_name}
-    n_samples       : ${params.n_samples}
-    n_features      : ${params.n_features}
-    n_classes       : ${params.n_classes}
 
     visualize       : ${params.visualize}
 
@@ -48,9 +45,9 @@ log.info """
  * main script flow
  */
 workflow {
-    // create synthetic data if specified
-    if ( params.make_dataset == true ) {
-        ch_datasets = make_dataset(params.dataset_name)
+    // fetch dataset if specified
+    if ( params.fetch_dataset == true ) {
+        ch_datasets = fetch_dataset(params.dataset_name)
 
         (ch_train_datasets, ch_predict_datasets) = split_train_test(ch_datasets)
     }
@@ -59,13 +56,14 @@ workflow {
     else {
         ch_train_data = Channel.fromFilePairs(params.train_data, size: 1, flat: true)
         ch_train_labels = Channel.fromFilePairs(params.train_labels, size: 1, flat: true)
-        ch_train_datasets = train_data.join(train_labels)
+        ch_train_datasets = ch_train_data.join(ch_train_labels)
 
         ch_predict_data = Channel.fromFilePairs(params.predict_data, size: 1, flat: true)
         ch_predict_labels = Channel.fromFilePairs(params.predict_labels, size: 1, flat: true)
-        ch_predict_datasets = predict_data.join(predict_labels)
+        ch_predict_datasets = ch_predict_data.join(ch_predict_labels)
     }
 
+    // visualize train/test sets
     if ( params.visualize == true ) {
         visualize(ch_train_datasets.concat(ch_predict_datasets))
     }

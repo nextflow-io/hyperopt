@@ -27,8 +27,11 @@ if __name__ == '__main__':
     x = pd.read_csv(args.data, index_col=0, sep='\t')
     y = pd.read_csv(args.labels, index_col=0, sep='\t')
 
+    # select target column
+    y.target = y.get(y.columns[0])
+
     # encode labels
-    classes = sorted(set(y.label))
+    classes = sorted(set(y.target))
 
     # perform inference
     print('performing inference')
@@ -36,7 +39,7 @@ if __name__ == '__main__':
     y_pred = model.predict(x)
     y_pred = [classes[label] for label in y_pred]
 
-    for sample_name, label_pred, label_true in zip(y.index, y_pred, y.label):
+    for sample_name, label_pred, label_true in zip(y.index, y_pred, y.target):
         print('%s: %8s (%8s)' % (sample_name, label_pred, label_true))
 
     print()

@@ -30,9 +30,12 @@ if __name__ == '__main__':
     x = pd.read_csv(args.data, index_col=0, sep='\t')
     y = pd.read_csv(args.labels, index_col=0, sep='\t')
 
+    # select target column
+    y.target = y.get(y.columns[0])
+
     # encode labels
-    classes = {label: idx for idx, label in enumerate(sorted(set(y.label)))}
-    y = [classes[label] for label in y.label]
+    classes = {label: idx for idx, label in enumerate(sorted(set(y.target)))}
+    y = [classes[label] for label in y.target]
 
     # select scaler
     Scaler = {

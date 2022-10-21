@@ -21,7 +21,10 @@ if __name__ == '__main__':
     x = pd.read_csv(args.data, index_col=0, sep='\t')
     y = pd.read_csv(args.labels, index_col=0, sep='\t')
 
-    classes = sorted(set(y.label))
+    # select target column
+    y.target = y.get(y.columns[0])
+
+    classes = sorted(set(y.target))
 
     # compute t-SNE embedding
     x_tsne = TSNE().fit_transform(x)
@@ -30,7 +33,7 @@ if __name__ == '__main__':
     plt.axis('off')
 
     for c in classes:
-        indices = (y.label == c)
+        indices = (y.target == c)
         plt.scatter(x_tsne[indices, 0], x_tsne[indices, 1], label=c, edgecolors='w')
 
     plt.subplots_adjust(right=0.70)
