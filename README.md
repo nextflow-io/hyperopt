@@ -1,6 +1,6 @@
-# ML-Example pipeline
+# ml-hyperopt
 
-A basic pipeline for training, evaluating, and using machine learning models with Nextflow.
+A proof-of-concept pipeline for performing hyperparameter optimization of machine learning models with Nextflow.
 
 
 ## Requirements
@@ -20,10 +20,10 @@ A basic pipeline for training, evaluating, and using machine learning models wit
 2. Launch the pipeline:
     ```bash
     # use conda natively (requires Anaconda)
-    ./nextflow run nextflow-io/ml-example -profile conda
+    ./nextflow run nextflow-io/ml-hyperopt -profile conda
 
     # use Wave containers (requires Docker and Tower Cloud account)
-    ./nextflow run nextflow-io/ml-example -profile wave
+    ./nextflow run nextflow-io/ml-hyperopt -profile wave
     ```
 
 3. When the pipeline completes, you can view the training and prediction results in the `results` folder.
@@ -33,7 +33,7 @@ Note: the first time you execute the pipeline, Nextflow will take a few minutes 
 
 ## Configuration
 
-The ML-Example pipeline consists of the following steps:
+The ml-hyperopt pipeline consists of the following steps:
 
 1. Download a dataset
 2. Split the dataset into train/test sets
@@ -52,11 +52,11 @@ You can control many aspects of this workflow with the `params` scope of the con
 
 ## Cluster support
 
-Since [Nextflow](http://www.nextflow.io) provides an abstraction between the pipeline logic and the underlying execution environment, the ML-Example pipeline can be executed on a single computer or an HPC cluster without any modifications.
+Since [Nextflow](http://www.nextflow.io) provides an abstraction between the pipeline logic and the underlying execution environment, the ml-hyperopt pipeline can be executed on a single computer or an HPC cluster without any modifications.
 
 Visit the [Nextflow documentation](https://www.nextflow.io/docs/latest/executor.html) to see which HPC schedulers are supported, and how to use them.
 
 
 ## Components
 
-ML-Example uses Python (>=3.10) and several Python packages for machine learning and data science. These dependencies can be found in the `conda.yml` file.
+The ml-hyperopt pipeline uses Python (>=3.10) and several Python packages for machine learning and data science. These dependencies are defined in the `conda.yml` file.

@@ -1,4 +1,4 @@
-name: ml-example
+name: ml-hyperopt
 channels:
   - defaults
 dependencies:
