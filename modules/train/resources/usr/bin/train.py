@@ -4,14 +4,18 @@ import argparse
 import json
 import pandas as pd
 import pickle
-from sklearn.dummy import DummyClassifier
-from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, mean_squared_error
+from sklearn.dummy import DummyClassifier, DummyRegressor
+from sklearn.ensemble import GradientBoostingClassifier, GradientBoostingRegressor, RandomForestClassifier, RandomForestRegressor
+from sklearn.linear_model import LinearRegression, LogisticRegression
+from sklearn.metrics import accuracy_score, mean_absolute_error, mean_squared_error
 from sklearn.model_selection import cross_val_predict
-from sklearn.neural_network import MLPClassifier
+from sklearn.neural_network import MLPClassifier, MLPRegressor
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler, StandardScaler
+
+
+def is_categorical(y):
+    return y.dtype.kind in 'OSUV'
 
 
 def encode_onehot(x, categories):
@@ -49,9 +53,13 @@ if __name__ == '__main__':
 
     # extract target column
     target = meta['target_names'][0]
-    classes = {v: i for i, v in enumerate(meta['categories'][target])}
 
-    y = [classes[v] for v in df[target]]
+    if is_categorical(df[target]):
+        classes = {v: i for i, v in enumerate(meta['categories'][target])}
+        y = df[target].apply(lambda v: classes[v])
+
+    else:
+        y = df[target]
 
     # select scaler
     Scaler = {
@@ -60,19 +68,28 @@ if __name__ == '__main__':
         'standard': StandardScaler
     }[args.scaler]
 
-    # select classifier
-    Classifier = {
-        'dummy': DummyClassifier,
-        'gb': GradientBoostingClassifier,
-        'lr': LogisticRegression,
-        'mlp': MLPClassifier,
-        'rf': RandomForestClassifier
-    }[args.model_type]
+    # select estimator
+    Estimator = {
+        True: {
+            'dummy': DummyClassifier,
+            'gb': GradientBoostingClassifier,
+            'lr': LogisticRegression,
+            'mlp': MLPClassifier,
+            'rf': RandomForestClassifier
+        },
+        False: {
+            'dummy': DummyRegressor,
+            'gb': GradientBoostingRegressor,
+            'lr': LinearRegression,
+            'mlp': MLPRegressor,
+            'rf': RandomForestRegressor
+        }
+    }[is_categorical(df[target])][args.model_type]
 
     # create model pipeline
     model = Pipeline([
         ('scaler', Scaler()),
-        ('clf', Classifier())
+        ('estimator', Estimator())
     ])
 
     # train and evaluate model
@@ -80,8 +97,19 @@ if __name__ == '__main__':
 
     y_pred = cross_val_predict(model, x, y, cv=5)
 
-    print('mse: %0.3f' % (mean_squared_error(y, y_pred)))
-    print('acc: %0.3f' % (accuracy_score(y, y_pred)))
+    scorers = {
+        True: [
+            ('mse', mean_squared_error),
+            ('acc', accuracy_score)
+        ],
+        False: [
+            ('mse', mean_squared_error),
+            ('mae', mean_absolute_error)
+        ]
+    }[is_categorical(df[target])]
+
+    for name, score_fn in scorers:
+        print('%s: %0.3f' % (name, score_fn(y, y_pred)))
 
     # train model on full dataset
     model.fit(x, y)

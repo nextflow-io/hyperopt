@@ -6,12 +6,12 @@ import pandas as pd
 from sklearn.datasets import fetch_openml
 
 
-def is_categorical(df, column):
-    return column != None and df[column].dtype.kind in 'OSUV'
+def is_categorical(y):
+    return y.dtype.kind in 'OSUV'
 
 
 def get_categories(df):
-    return {c: df[c].unique().tolist() for c in df.columns if is_categorical(df, c)}
+    return {c: df[c].unique().tolist() for c in df.columns if is_categorical(df[c])}
 
 
 if __name__ == '__main__':

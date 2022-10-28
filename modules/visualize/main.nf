@@ -10,7 +10,6 @@ process visualize {
 
     script:
     """
-
     visualize.py \
         --data    ${data_file} \
         --meta    ${meta_file} \

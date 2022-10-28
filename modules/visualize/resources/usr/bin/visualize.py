@@ -9,6 +9,10 @@ import pandas as pd
 from sklearn.manifold import TSNE
 
 
+def is_categorical(y):
+    return y.dtype.kind in 'OSUV'
+
+
 def encode_onehot(x, categories):
     for column, values in categories.items():
         if column in x:
@@ -40,21 +44,27 @@ if __name__ == '__main__':
 
     # extract target column
     target = meta['target_names'][0]
-    classes = meta['categories'][target]
-
     y = df[target]
 
     # compute t-SNE embedding
     x_tsne = TSNE().fit_transform(x)
 
-    # plot t-SNE embedding with class labels
+    # plot t-SNE embedding with class labels or colorbar
     plt.axis('off')
 
-    for c in classes:
-        indices = (y == c)
-        plt.scatter(x_tsne[indices, 0], x_tsne[indices, 1], label=c, edgecolors='w')
+    if is_categorical(y):
+        classes = meta['categories'][target]
 
-    plt.subplots_adjust(right=0.70)
-    plt.legend(loc='upper left', bbox_to_anchor=(1, 1))
+        for c in classes:
+            indices = (y == c)
+            plt.scatter(x_tsne[indices, 0], x_tsne[indices, 1], label=c, edgecolors='w')
+
+        plt.subplots_adjust(right=0.70)
+        plt.legend(loc='upper left', bbox_to_anchor=(1, 1))
+
+    else:
+        plt.scatter(x_tsne[:, 0], x_tsne[:, 1], c=y, edgecolors='w')
+        plt.colorbar()
+
     plt.savefig(args.outfile)
     plt.close()
