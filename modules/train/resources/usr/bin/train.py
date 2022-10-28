@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import json
 import pandas as pd
 import pickle
 from sklearn.dummy import DummyClassifier
@@ -13,11 +14,21 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler, StandardScaler
 
 
+def encode_onehot(x, categories):
+    for column, values in categories.items():
+        if column in x:
+            for v in values:
+                x['%s_%s' % (column, v)] = (x[column] == v)
+            x = x.drop(columns=[column])
+
+    return x
+
+
 if __name__ == '__main__':
     # parse command-line arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('--data', help='training data file', required=True)
-    parser.add_argument('--labels', help='training label file', required=True)
+    parser.add_argument('--meta', help='training metadata file', required=True)
     parser.add_argument('--scaler', help='preprocessing transform to apply to inputs', choices=['maxabs', 'minmax', 'standard'], default='standard')
     parser.add_argument('--model-type', help='which model to train', choices=['dummy', 'gb', 'lr', 'mlp', 'rf'], default='dummy')
     parser.add_argument('--model-name', help='name of trained model file', required=True)
@@ -27,15 +38,20 @@ if __name__ == '__main__':
     # load dataset
     print('loading dataset')
 
-    x = pd.read_csv(args.data, index_col=0, sep='\t')
-    y = pd.read_csv(args.labels, index_col=0, sep='\t')
+    df = pd.read_csv(args.data, index_col=0, sep='\t')
 
-    # select target column
-    y.target = y.get(y.columns[0])
+    with open(args.meta, 'r') as f:
+        meta = json.load(f)
 
-    # encode labels
-    classes = {label: idx for idx, label in enumerate(sorted(set(y.target)))}
-    y = [classes[label] for label in y.target]
+    # extract input features
+    x = df[meta['feature_names']]
+    x = encode_onehot(x, meta['categories'])
+
+    # extract target column
+    target = meta['target_names'][0]
+    classes = {v: i for i, v in enumerate(meta['categories'][target])}
+
+    y = [classes[v] for v in df[target]]
 
     # select scaler
     Scaler = {

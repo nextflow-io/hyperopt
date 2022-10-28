@@ -1,8 +1,17 @@
 #!/usr/bin/env python3
 
 import argparse
+import json
 import pandas as pd
 from sklearn.datasets import fetch_openml
+
+
+def is_categorical(df, column):
+    return column != None and df[column].dtype.kind in 'OSUV'
+
+
+def get_categories(df):
+    return {c: df[c].unique().tolist() for c in df.columns if is_categorical(df, c)}
 
 
 if __name__ == '__main__':
@@ -10,17 +19,23 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Download an OpenML dataset')
     parser.add_argument('--name', help='dataset name', required=True)
     parser.add_argument('--data', help='data file', default='data.txt')
-    parser.add_argument('--labels', help='label file', default='labels.txt')
+    parser.add_argument('--meta', help='metadata file', default='meta.json')
 
     args = parser.parse_args()
 
     # download dataset from openml
-    data = fetch_openml(args.name)
+    dataset = fetch_openml(args.name, as_frame=True)
 
-    # initialize dataframes
-    x = pd.DataFrame(data.data, columns=data.feature_names)
-    y = pd.DataFrame(data.target, columns=data.target_names)
+    # save data
+    dataset.frame.to_csv(args.data, sep='\t')
 
-    # save datasets
-    x.to_csv(args.data, sep='\t', float_format='%.8f')
-    y.to_csv(args.labels, sep='\t')
+    # save metadata
+    meta = {
+        'name': args.name,
+        'feature_names': dataset.feature_names,
+        'target_names': dataset.target_names,
+        'categories': get_categories(dataset.frame) 
+    }
+
+    with open(args.meta, 'w') as f:
+        json.dump(meta, f)

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import json
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -8,23 +9,40 @@ import pandas as pd
 from sklearn.manifold import TSNE
 
 
+def encode_onehot(x, categories):
+    for column, values in categories.items():
+        if column in x:
+            for v in values:
+                x['%s_%s' % (column, v)] = (x[column] == v)
+            x = x.drop(columns=[column])
+
+    return x
+
+
 if __name__ == '__main__':
     # parse command-line arguments
     parser = argparse.ArgumentParser(description='Visualize a dataset with t-SNE')
-    parser.add_argument('--data', help='training data file', required=True)
-    parser.add_argument('--labels', help='training label file', required=True)
+    parser.add_argument('--data', help='data file', required=True)
+    parser.add_argument('--meta', help='metadata file', required=True)
     parser.add_argument('--outfile', help='output plot file', required=True)
 
     args = parser.parse_args()
 
     # load dataset
-    x = pd.read_csv(args.data, index_col=0, sep='\t')
-    y = pd.read_csv(args.labels, index_col=0, sep='\t')
+    df = pd.read_csv(args.data, index_col=0, sep='\t')
 
-    # select target column
-    y.target = y.get(y.columns[0])
+    with open(args.meta, 'r') as f:
+        meta = json.load(f)
 
-    classes = sorted(set(y.target))
+    # extract input features
+    x = df[meta['feature_names']]
+    x = encode_onehot(x, meta['categories'])
+
+    # extract target column
+    target = meta['target_names'][0]
+    classes = meta['categories'][target]
+
+    y = df[target]
 
     # compute t-SNE embedding
     x_tsne = TSNE().fit_transform(x)
@@ -33,7 +51,7 @@ if __name__ == '__main__':
     plt.axis('off')
 
     for c in classes:
-        indices = (y.target == c)
+        indices = (y == c)
         plt.scatter(x_tsne[indices, 0], x_tsne[indices, 1], label=c, edgecolors='w')
 
     plt.subplots_adjust(right=0.70)

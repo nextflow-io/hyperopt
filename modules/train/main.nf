@@ -4,7 +4,7 @@ process train {
     tag "${dataset_name}/${model_type}"
 
     input:
-    tuple val(dataset_name), path(data_file), path(labels_file)
+    tuple val(dataset_name), path(data_file), path(meta_file)
     each model_type
 
     output:
@@ -14,7 +14,7 @@ process train {
     """
     train.py \
         --data       ${data_file} \
-        --labels     ${labels_file} \
+        --meta       ${meta_file} \
         --scaler     standard \
         --model-type ${model_type} \
         --model-name ${dataset_name}.pkl

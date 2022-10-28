@@ -7,7 +7,7 @@ process fetch_dataset {
     val(dataset_name)
 
     output:
-    tuple val(dataset_name), path('data.txt'), path('labels.txt'), emit: datasets
+    tuple val(dataset_name), path('data.txt'), path('meta.json'), emit: datasets
 
     script:
     """

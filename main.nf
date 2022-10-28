@@ -29,13 +29,13 @@ log.info """
 
     train           : ${params.train}
     train_data      : ${params.train_data}
-    train_labels    : ${params.train_labels}
+    train_meta      : ${params.train_meta}
     train_models    : ${params.train_models}
 
     predict         : ${params.predict}
-    predict_model   : ${params.predict_model}
+    predict_models  : ${params.predict_models}
     predict_data    : ${params.predict_data}
-    predict_labels  : ${params.predict_labels}
+    predict_meta    : ${params.predict_meta}
 
     outdir          : ${params.outdir}
     """
@@ -55,12 +55,12 @@ workflow {
     // otherwise load input files
     else {
         ch_train_data = Channel.fromFilePairs(params.train_data, size: 1, flat: true)
-        ch_train_labels = Channel.fromFilePairs(params.train_labels, size: 1, flat: true)
-        ch_train_datasets = ch_train_data.join(ch_train_labels)
+        ch_train_meta = Channel.fromFilePairs(params.train_meta, size: 1, flat: true)
+        ch_train_datasets = ch_train_data.join(ch_train_meta)
 
         ch_predict_data = Channel.fromFilePairs(params.predict_data, size: 1, flat: true)
-        ch_predict_labels = Channel.fromFilePairs(params.predict_labels, size: 1, flat: true)
-        ch_predict_datasets = ch_predict_data.join(ch_predict_labels)
+        ch_predict_meta = Channel.fromFilePairs(params.predict_meta, size: 1, flat: true)
+        ch_predict_datasets = ch_predict_data.join(ch_predict_meta)
     }
 
     // visualize train/test sets
@@ -69,8 +69,8 @@ workflow {
     }
 
     // print warning if both training and pre-trained model are enabled
-    if ( params.train == true && params.predict_model != null ) {
-        log.warn 'Training is enabled but pre-trained model is also provided, pre-trained model will be ignored'
+    if ( params.train == true && params.predict_models != null ) {
+        log.warn 'Training is enabled but pre-trained model(s) are also provided, pre-trained models will be ignored'
     }
 
     // perform training if specified
@@ -79,8 +79,8 @@ workflow {
     }
 
     // otherwise load trained model if specified
-    else if ( params.predict_model != null ) {
-        ch_models = Channel.fromFilePairs(params.predict_model, size: 1, flat: true)
+    else if ( params.predict_models != null ) {
+        ch_models = Channel.fromFilePairs(params.predict_models, size: 1, flat: true)
             | map { [it[0], 'pretrained', it[1]] }
     }
 
