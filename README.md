@@ -38,8 +38,9 @@ The ml-hyperopt pipeline consists of the following steps:
 1. Download a dataset
 2. Split the dataset into train/test sets
 3. Visualize the train/test sets
-4. Train a variety of models on the train set
+4. Train a variety of models on the training set
 5. Evaluate each model on the test set
+6. Select the best model based on evaluation score
 
 You can control many aspects of this workflow with the `params` scope of the configuration, including:
 
