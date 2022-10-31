@@ -1,6 +1,6 @@
 
 process train {
-    publishDir params.outdir, mode: 'copy'
+    publishDir params.outdir, mode: 'copy', saveAs: { file -> "${dataset_name}.${model_type}.${file}" }
     tag "${dataset_name}/${model_type}"
 
     input:
@@ -8,7 +8,8 @@ process train {
     each model_type
 
     output:
-    tuple val(dataset_name), val(model_type), path("${dataset_name}.pkl"), emit: models
+    tuple val(dataset_name), val(model_type), path('model.pkl'), emit: models
+    tuple val(dataset_name), val(model_type), stdout, emit: logs
 
     script:
     """
@@ -16,7 +17,6 @@ process train {
         --data       ${data_file} \
         --meta       ${meta_file} \
         --scaler     standard \
-        --model-type ${model_type} \
-        --model-name ${dataset_name}.pkl
+        --model-type ${model_type}
     """
 }

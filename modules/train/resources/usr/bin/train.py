@@ -7,7 +7,7 @@ import pickle
 from sklearn.dummy import DummyClassifier, DummyRegressor
 from sklearn.ensemble import GradientBoostingClassifier, GradientBoostingRegressor, RandomForestClassifier, RandomForestRegressor
 from sklearn.linear_model import LinearRegression, LogisticRegression
-from sklearn.metrics import accuracy_score, mean_absolute_error, mean_squared_error
+from sklearn.metrics import accuracy_score, mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import cross_val_predict
 from sklearn.neural_network import MLPClassifier, MLPRegressor
 from sklearn.pipeline import Pipeline
@@ -35,7 +35,7 @@ if __name__ == '__main__':
     parser.add_argument('--meta', help='training metadata file', required=True)
     parser.add_argument('--scaler', help='preprocessing transform to apply to inputs', choices=['maxabs', 'minmax', 'standard'], default='standard')
     parser.add_argument('--model-type', help='which model to train', choices=['dummy', 'gb', 'lr', 'mlp', 'rf'], default='dummy')
-    parser.add_argument('--model-name', help='name of trained model file', required=True)
+    parser.add_argument('--model-name', help='name of trained model file', default='model.pkl')
 
     args = parser.parse_args()
 
@@ -100,11 +100,13 @@ if __name__ == '__main__':
     scorers = {
         True: [
             ('mse', mean_squared_error),
+            ('mae', mean_absolute_error),
             ('acc', accuracy_score)
         ],
         False: [
             ('mse', mean_squared_error),
-            ('mae', mean_absolute_error)
+            ('mae', mean_absolute_error),
+            ('r2', r2_score)
         ]
     }[is_categorical(df[target])]
 

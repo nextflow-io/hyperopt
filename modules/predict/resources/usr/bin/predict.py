@@ -4,7 +4,7 @@ import argparse
 import json
 import pandas as pd
 import pickle
-from sklearn.metrics import accuracy_score, mean_absolute_error
+from sklearn.metrics import accuracy_score, r2_score
 
 
 def is_categorical(y):
@@ -27,6 +27,7 @@ if __name__ == '__main__':
     parser.add_argument('--model', help='trained model file', required=True)
     parser.add_argument('--data', help='data file', required=True)
     parser.add_argument('--meta', help='metadata file', required=True)
+    parser.add_argument('--outfile', help='score file', default='score.json')
 
     args = parser.parse_args()
 
@@ -64,7 +65,20 @@ if __name__ == '__main__':
     for sample_name, v_pred, v_true in zip(df.index, y_pred, y_true):
         print('%8s: %8s (%8s)' % (sample_name, v_pred, v_true))
 
+    # save score
     if is_categorical(y_true):
-        print('acc: %0.3f' % (accuracy_score(y_true, y_pred)))
+        score = {
+            'name': 'acc',
+            'value': accuracy_score(y_true, y_pred)
+        }
+
     else:
-        print('mae: %0.3f' % (mean_absolute_error(y_true, y_pred)))
+        score = {
+            'name': 'r2',
+            'value': r2_score(y_true, y_pred)
+        }
+
+    print('%s: %0.3f' % (score['name'], score['value']))
+
+    with open(args.outfile, 'w') as f:
+        json.dump(score, f)

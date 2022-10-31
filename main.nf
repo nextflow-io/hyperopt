@@ -11,6 +11,7 @@
  * defined by the Mozilla Public License, v. 2.0.
  *
  */
+import groovy.json.JsonSlurper
 
 include { fetch_dataset } from './modules/fetch_dataset'
 include { split_train_test } from './modules/split_train_test'
@@ -75,7 +76,7 @@ workflow {
 
     // perform training if specified
     if ( params.train == true ) {
-        ch_models = train(ch_train_datasets, params.train_models)
+        (ch_models, ch_train_logs) = train(ch_train_datasets, params.train_models)
     }
 
     // otherwise load trained model if specified
@@ -87,7 +88,17 @@ workflow {
     // perform inference if specified
     if ( params.predict == true ) {
         ch_predict_inputs = ch_models.combine(ch_predict_datasets, by: 0)
-        predict(ch_predict_inputs)
+        (ch_scores, ch_predict_logs) = predict(ch_predict_inputs)
+
+        // select the best model based on inference score
+        ch_scores
+            | max {
+                new JsonSlurper().parse(it[2])['value']
+            }
+            | subscribe { dataset_name, model_type, score_file ->
+                def score = new JsonSlurper().parse(score_file)
+                println "The best model for ${dataset_name} was ${model_type}, with ${score['name']} = ${score['value']}"
+            }
     }
 }
 
