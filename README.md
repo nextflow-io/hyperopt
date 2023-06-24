@@ -45,7 +45,7 @@ The ml-hyperopt pipeline consists of the following steps:
 You can control many aspects of this workflow with the `params` scope of the configuration, including:
 
 * Enable/disable each individual step
-* Download a different dataset (default is `iris`, see [OpenML.org](https://www.openml.org/search?type=data&status=active) to view available datasets)
+* Download a different dataset (default is `wdbc`, see [OpenML.org](https://www.openml.org/search?type=data&status=active) to view available datasets)
 * Provide your own training data instead of downloading it
 * Provide your own pre-trained model and test data
 * Select different models (see the `train` module for all available options)

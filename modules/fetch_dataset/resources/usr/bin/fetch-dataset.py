@@ -2,7 +2,6 @@
 
 import argparse
 import json
-import pandas as pd
 from sklearn.datasets import fetch_openml
 
 
