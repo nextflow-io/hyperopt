@@ -9,10 +9,6 @@ import pandas as pd
 from sklearn.manifold import TSNE
 
 
-def is_categorical(y):
-    return y.dtype.kind in 'OSUV'
-
-
 def encode_onehot(x, categories):
     for column, values in categories.items():
         if column in x:
@@ -52,7 +48,7 @@ if __name__ == '__main__':
     # plot t-SNE embedding with class labels or colorbar
     plt.axis('off')
 
-    if is_categorical(y):
+    if target in meta['categories']:
         classes = meta['categories'][target]
 
         for c in classes:

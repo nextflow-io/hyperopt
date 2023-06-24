@@ -7,10 +7,6 @@ import pickle
 from sklearn.metrics import accuracy_score, r2_score
 
 
-def is_categorical(y):
-    return y.dtype.kind in 'OSUV'
-
-
 def encode_onehot(x, categories):
     for column, values in categories.items():
         if column in x:
@@ -52,13 +48,14 @@ if __name__ == '__main__':
     # extract target column
     target = meta['target_names'][0]
     y_true = df[target]
+    is_categorical = target in meta['categories']
 
     # perform inference
     print('performing inference')
 
     y_pred = model.predict(x)
 
-    if is_categorical(y_true):
+    if is_categorical:
         classes = meta['categories'][target]
         y_pred = [classes[v] for v in y_pred]
 
@@ -66,9 +63,9 @@ if __name__ == '__main__':
         print('%8s: %8s (%8s)' % (sample_name, v_pred, v_true))
 
     # save score
-    if is_categorical(y_true):
+    if is_categorical:
         score = {
-            'name': 'acc',
+            'name': 'accuracy',
             'value': accuracy_score(y_true, y_pred)
         }
 

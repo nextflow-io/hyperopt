@@ -10,7 +10,18 @@ def is_categorical(y):
 
 
 def get_categories(df):
-    return {c: df[c].unique().tolist() for c in df.columns if is_categorical(df[c])}
+    result = {}
+    for c in df.columns:
+        if is_categorical(df[c]):
+            values = df[c].unique().tolist()
+
+            # fix bug with numerical categories
+            if sum(v.isdigit() for v in values) == len(values):
+                values = [int(v) for v in values]
+
+            result[c] = values
+
+    return result
 
 
 if __name__ == '__main__':

@@ -14,10 +14,6 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MaxAbsScaler, MinMaxScaler, StandardScaler
 
 
-def is_categorical(y):
-    return y.dtype.kind in 'OSUV'
-
-
 def encode_onehot(x, categories):
     for column, values in categories.items():
         if column in x:
@@ -53,8 +49,9 @@ if __name__ == '__main__':
 
     # extract target column
     target = meta['target_names'][0]
+    is_categorical = target in meta['categories']
 
-    if is_categorical(df[target]):
+    if is_categorical:
         classes = {v: i for i, v in enumerate(meta['categories'][target])}
         y = df[target].apply(lambda v: classes[v])
 
@@ -84,7 +81,7 @@ if __name__ == '__main__':
             'mlp': MLPRegressor,
             'rf': RandomForestRegressor
         }
-    }[is_categorical(df[target])][args.model_type]
+    }[is_categorical][args.model_type]
 
     # create model pipeline
     model = Pipeline([
@@ -108,7 +105,7 @@ if __name__ == '__main__':
             ('mae', mean_absolute_error),
             ('r2', r2_score)
         ]
-    }[is_categorical(df[target])]
+    }[is_categorical]
 
     for name, score_fn in scorers:
         print('%s: %0.3f' % (name, score_fn(y, y_pred)))
