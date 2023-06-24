@@ -6,8 +6,8 @@ A proof-of-concept pipeline for performing hyperparameter optimization of machin
 ## Requirements
 
 * Unix-like operating system (Linux, macOS, etc)
-* Java 11
-* [Anaconda](https://www.anaconda.com/products/distribution) or [Docker](https://docs.docker.com/)
+* Java >=11
+* [Conda](https://docs.conda.io/en/latest/) or [Docker](https://docs.docker.com/)
 
 
 ## Quickstart
@@ -19,10 +19,10 @@ A proof-of-concept pipeline for performing hyperparameter optimization of machin
 
 2. Launch the pipeline:
     ```bash
-    # use conda natively (requires Anaconda)
+    # use conda natively (requires Conda)
     ./nextflow run nextflow-io/ml-hyperopt -profile conda
 
-    # use Wave containers (requires Docker and Tower Cloud account)
+    # use Wave containers (requires Docker)
     ./nextflow run nextflow-io/ml-hyperopt -profile wave
     ```
 
@@ -42,13 +42,15 @@ The ml-hyperopt pipeline consists of the following steps:
 5. Evaluate each model on the test set
 6. Select the best model based on evaluation score
 
-You can control many aspects of this workflow with the `params` scope of the configuration, including:
+You can control many aspects of this workflow with the pipeline parameters, including:
 
 * Enable/disable each individual step
 * Download a different dataset (default is `wdbc`, see [OpenML.org](https://www.openml.org/search?type=data&status=active) to view available datasets)
 * Provide your own training data instead of downloading it
 * Provide your own pre-trained model and test data
 * Select different models (see the `train` module for all available options)
+
+See the `nextflow.config` file for the list of pipeline parameters.
 
 
 ## Cluster support
