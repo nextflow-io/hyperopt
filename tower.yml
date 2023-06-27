@@ -1,9 +1,9 @@
 reports:
-  "*.data..txt":
+  "*.data.txt":
     display: "Input datasets"
   "*.train.txt":
     display: "Training data"
-  "*.predict.txt":
+  "*.test.txt":
     display: "Test data"
   "*.png":
     display: "t-SNE plots"
