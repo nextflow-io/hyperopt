@@ -21,8 +21,8 @@ include { predict } from './modules/predict'
 
 
 log.info """
-    M L - E X A M P L E   P I P E L I N E
-    =====================================
+    M L - H Y P E R O P T   P I P E L I N E
+    =======================================
     fetch_dataset   : ${params.fetch_dataset}
     dataset_name    : ${params.dataset_name}
 
@@ -97,7 +97,7 @@ workflow {
             }
             | subscribe { dataset_name, model_type, score_file ->
                 def score = new JsonSlurper().parse(score_file)
-                println "The best model for ${dataset_name} was ${model_type}, with ${score['name']} = ${score['value']}"
+                println "The best model for \'${dataset_name}\' was \'${model_type}\', with ${score.name} = ${String.format('%.3f', score.value)}"
             }
     }
 }
