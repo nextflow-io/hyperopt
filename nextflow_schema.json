@@ -1,0 +1,44 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "https://raw.githubusercontent.com/nextflow-io/ml-hyperopt/master/nextflow_schema.json",
+    "title": "ml-hyperopt pipeline parameters",
+    "description": "Proof-of-concept pipeline for training and evaluating machine learning models with Nextflow. Not all parameters are included in this schema, refer to the nextflow.config for more details.",
+    "type": "object",
+    "properties": {
+        "fetch_dataset": {
+            "type": "boolean",
+            "description": "Fetch a dataset by name from OpenML",
+            "default": true
+        },
+        "dataset_name": {
+            "type": "string",
+            "description": "Name of dataset to fetch from OpenML",
+            "default": "wdbc"
+        },
+        "visualize": {
+            "type": "boolean",
+            "description": "Visualize the training and test sets",
+            "default": true
+        },
+        "datadir": {
+            "type": "string",
+            "description": "Directory that contains any input datasets and pre-trained models",
+            "default": "data"
+        },
+        "train": {
+            "type": "boolean",
+            "description": "Train a set of models on the given training set(s)",
+            "default": true
+        },
+        "predict": {
+            "type": "boolean",
+            "description": "Evaluate a set of trained models on the given test set(s)",
+            "default": true
+        },
+        "outdir": {
+            "type": "string",
+            "description": "Directory to publish output data",
+            "default": "results"
+        }
+    }
+}
