@@ -1,44 +1,65 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema",
-    "$id": "https://raw.githubusercontent.com/nextflow-io/ml-hyperopt/master/nextflow_schema.json",
-    "title": "ml-hyperopt pipeline parameters",
-    "description": "Proof-of-concept pipeline for training and evaluating machine learning models with Nextflow. Not all parameters are included in this schema, refer to the nextflow.config for more details.",
-    "type": "object",
-    "properties": {
-        "fetch_dataset": {
-            "type": "boolean",
-            "description": "Fetch a dataset by name from OpenML",
-            "default": true
-        },
-        "dataset_name": {
-            "type": "string",
-            "description": "Name of dataset to fetch from OpenML",
-            "default": "wdbc"
-        },
-        "visualize": {
-            "type": "boolean",
-            "description": "Visualize the training and test sets",
-            "default": true
-        },
-        "datadir": {
-            "type": "string",
-            "description": "Directory that contains any input datasets and pre-trained models",
-            "default": "data"
-        },
-        "train": {
-            "type": "boolean",
-            "description": "Train a set of models on the given training set(s)",
-            "default": true
-        },
-        "predict": {
-            "type": "boolean",
-            "description": "Evaluate a set of trained models on the given test set(s)",
-            "default": true
-        },
-        "outdir": {
-            "type": "string",
-            "description": "Directory to publish output data",
-            "default": "results"
-        }
-    }
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://raw.githubusercontent.com/nextflow-io/ml-hyperopt/master/nextflow_schema.json",
+  "title": "ml-hyperopt pipeline parameters",
+  "description": "Proof-of-concept pipeline for training and evaluating machine learning models with Nextflow. Not all parameters are included in this schema, refer to the nextflow.config for more details.",
+  "type": "object",
+  "definitions": {
+      "pipeline_options": {
+          "title": "Pipeline options",
+          "type": "object",
+          "description": "",
+          "default": "",
+          "fa_icon": "fas fa-terminal",
+          "properties": {
+              "fetch_dataset": {
+                  "type": "boolean",
+                  "description": "Fetch a dataset by name from OpenML",
+                  "default": true,
+                  "fa_icon": "fas fa-download"
+              },
+              "dataset_name": {
+                  "type": "string",
+                  "description": "Name of dataset to fetch from OpenML",
+                  "default": "wdbc",
+                  "fa_icon": "fas fa-file-csv"
+              },
+              "visualize": {
+                  "type": "boolean",
+                  "description": "Visualize the training and test sets",
+                  "default": true,
+                  "fa_icon": "fas fa-chart-line"
+              },
+              "datadir": {
+                  "type": "string",
+                  "description": "Directory that contains any input datasets and pre-trained models",
+                  "default": "data",
+                  "fa_icon": "fas fa-folder-open"
+              },
+              "train": {
+                  "type": "boolean",
+                  "description": "Train a set of models on the given training set(s)",
+                  "default": true,
+                  "fa_icon": "fas fa-dumbbell"
+              },
+              "predict": {
+                  "type": "boolean",
+                  "description": "Evaluate a set of trained models on the given test set(s)",
+                  "default": true,
+                  "fa_icon": "fas fa-balance-scale-right"
+              },
+              "outdir": {
+                  "type": "string",
+                  "description": "Directory to publish output data",
+                  "default": "results",
+                  "fa_icon": "fas fa-folder-open"
+              }
+          }
+      }
+  },
+  "allOf": [
+      {
+          "$ref": "#/definitions/pipeline_options"
+      }
+  ]
 }
