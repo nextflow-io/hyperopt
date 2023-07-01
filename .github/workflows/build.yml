@@ -1,4 +1,4 @@
-name: ml-hyperopt
+name: hyperopt
 on:
   push:
     branches:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: ml-hyperopt ci
+    name: hyperopt ci
     runs-on: ubuntu-latest
     timeout-minutes: 10
     strategy:

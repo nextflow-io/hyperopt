@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
-  "$id": "https://raw.githubusercontent.com/nextflow-io/ml-hyperopt/master/nextflow_schema.json",
-  "title": "ml-hyperopt pipeline parameters",
+  "$id": "https://raw.githubusercontent.com/nextflow-io/hyperopt/master/nextflow_schema.json",
+  "title": "hyperopt pipeline parameters",
   "description": "Proof-of-concept pipeline for training and evaluating machine learning models with Nextflow. Not all parameters are included in this schema, refer to the nextflow.config for more details.",
   "type": "object",
   "definitions": {

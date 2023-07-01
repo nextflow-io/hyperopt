@@ -1,4 +1,4 @@
-name: ml-hyperopt
+name: hyperopt
 channels:
   - defaults
 dependencies:

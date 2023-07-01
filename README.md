@@ -1,4 +1,4 @@
-# ml-hyperopt
+# hyperopt
 
 A proof-of-concept pipeline for performing hyperparameter optimization of machine learning models with Nextflow.
 
@@ -20,10 +20,10 @@ A proof-of-concept pipeline for performing hyperparameter optimization of machin
 2. Launch the pipeline:
     ```bash
     # use conda natively (requires Conda)
-    ./nextflow run nextflow-io/ml-hyperopt -profile conda
+    ./nextflow run nextflow-io/hyperopt -profile conda
 
     # use Wave containers (requires Docker)
-    ./nextflow run nextflow-io/ml-hyperopt -profile wave
+    ./nextflow run nextflow-io/hyperopt -profile wave
     ```
 
 3. When the pipeline completes, you can view the training and prediction results in the `results` folder.
@@ -33,7 +33,7 @@ Note: the first time you execute the pipeline, Nextflow will take a few minutes 
 
 ## Configuration
 
-The ml-hyperopt pipeline consists of the following steps:
+The hyperopt pipeline consists of the following steps:
 
 1. Download a dataset
 2. Split the dataset into train/test sets
@@ -55,11 +55,11 @@ See the `nextflow.config` file for the list of pipeline parameters.
 
 ## Cluster support
 
-Since [Nextflow](http://www.nextflow.io) provides an abstraction between the pipeline logic and the underlying execution environment, the ml-hyperopt pipeline can be executed on a single computer or an HPC cluster without any modifications.
+Since [Nextflow](http://www.nextflow.io) provides an abstraction between the pipeline logic and the underlying execution environment, the hyperopt pipeline can be executed on a single computer or an HPC cluster without any modifications.
 
 Visit the [Nextflow documentation](https://www.nextflow.io/docs/latest/executor.html) to see which HPC schedulers are supported, and how to use them.
 
 
 ## Components
 
-The ml-hyperopt pipeline uses Python (>=3.10) and several Python packages for machine learning and data science. These dependencies are defined in the `conda.yml` file.
+The hyperopt pipeline uses Python (>=3.10) and several Python packages for machine learning and data science. These dependencies are defined in the `conda.yml` file.
