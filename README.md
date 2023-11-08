@@ -12,7 +12,7 @@ A proof-of-concept pipeline for performing hyperparameter optimization of machin
 
 ## Quickstart
 
-1. Install Nextflow (version 22.10.x or higher):
+1. Install Nextflow (version 23.10.x or higher):
     ```bash
     curl -s https://get.nextflow.io | bash
     ```
