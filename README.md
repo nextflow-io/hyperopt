@@ -12,12 +12,14 @@ A proof-of-concept pipeline for performing hyperparameter optimization of machin
 
 ## Quickstart
 
-1. Install Nextflow (version 23.10.x or higher):
+1. Install Nextflow (version 23.10 or higher):
+
     ```bash
     curl -s https://get.nextflow.io | bash
     ```
 
 2. Launch the pipeline:
+
     ```bash
     # use conda natively (requires Conda)
     ./nextflow run nextflow-io/hyperopt -profile conda
@@ -28,7 +30,9 @@ A proof-of-concept pipeline for performing hyperparameter optimization of machin
 
 3. When the pipeline completes, you can view the training and prediction results in the `results` folder.
 
-Note: the first time you execute the pipeline, Nextflow will take a few minutes to download the pipeline code from this GitHub repository and any related software dependencies (e.g. conda packages or Docker images).
+> [!NOTE]
+>
+> When you run the pipeline for the first time, it will take a moment to download the pipeline from this GitHub repository and any related software dependencies (e.g. conda packages or Docker images).
 
 
 ## Configuration
@@ -53,13 +57,12 @@ You can control many aspects of this workflow with the pipeline parameters, incl
 See the `nextflow.config` file for the list of pipeline parameters.
 
 
-## Cluster support
+## Executors
 
-Since [Nextflow](http://www.nextflow.io) provides an abstraction between the pipeline logic and the underlying execution environment, the hyperopt pipeline can be executed on a single computer or an HPC cluster without any modifications.
+Since [Nextflow](http://www.nextflow.io) provides an abstraction between the pipeline logic and the underlying execution environment, the hyperopt pipeline can be executed seamlessly on a local machine, an HPC cluster, or a cloud provider.
 
-Visit the [Nextflow documentation](https://www.nextflow.io/docs/latest/executor.html) to see which HPC schedulers are supported, and how to use them.
+See the Nextflow documentation to learn more about [Executors](https://docs.seqera.io/nextflow/executor) and [Configuration](https://docs.seqera.io/nextflow/config).
 
-
-## Components
+## Software dependencies
 
 The hyperopt pipeline uses Python (>=3.10) and several Python packages for machine learning and data science. These dependencies are defined in the `conda.yml` file.
