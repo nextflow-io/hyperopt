@@ -1,22 +1,31 @@
+nextflow.enable.types = true
 
 process TRAIN {
-    publishDir params.outdir, mode: 'copy', saveAs: { file -> "${dataset_name}.${model_type}.${file}" }
     tag "${dataset_name}/${model_type}"
 
     input:
-    tuple val(dataset_name), path(meta_file), path(data_file)
-    each model_type
+    record(
+        dataset_name: String,
+        meta: Path,
+        data: Path,
+        model_type: String
+    )
 
     output:
-    tuple val(dataset_name), val(model_type), path('model.pkl'), emit: models
-    tuple val(dataset_name), val(model_type), stdout, emit: logs
+    record(
+        dataset_name: dataset_name,
+        model_type: model_type,
+        model: file('model.pkl'),
+        logs: file('train.log'),
+    )
 
     script:
     """
     train.py \
-        --data       ${data_file} \
-        --meta       ${meta_file} \
+        --data       ${data} \
+        --meta       ${meta} \
         --scaler     standard \
-        --model-type ${model_type}
+        --model-type ${model_type} \
+        > train.log
     """
 }

@@ -6,13 +6,13 @@ A proof-of-concept pipeline for performing hyperparameter optimization of machin
 ## Requirements
 
 * Unix-like operating system (Linux, macOS, etc)
-* Java >=11
+* Java >=17
 * [Conda](https://docs.conda.io/en/latest/) or [Docker](https://docs.docker.com/)
 
 
 ## Quickstart
 
-1. Install Nextflow (version 23.10 or higher):
+1. Install Nextflow (version 26.04 or higher):
 
     ```bash
     curl -s https://get.nextflow.io | bash
