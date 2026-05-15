@@ -5,5 +5,6 @@ dependencies:
   - matplotlib
   - numpy
   - pandas
-  - python=3.10
+  - python=3.14
   - scikit-learn
+  - umap-learn

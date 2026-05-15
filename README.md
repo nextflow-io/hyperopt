@@ -65,4 +65,4 @@ See the Nextflow documentation to learn more about [Executors](https://docs.seqe
 
 ## Software dependencies
 
-The hyperopt pipeline uses Python (>=3.10) and several Python packages for machine learning and data science. These dependencies are defined in the `conda.yml` file.
+The hyperopt pipeline uses Python (>=3.14) and several Python packages for machine learning and data science. These dependencies are defined in the `conda.yml` file.

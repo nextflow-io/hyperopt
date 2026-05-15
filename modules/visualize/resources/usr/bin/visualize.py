@@ -6,7 +6,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import pandas as pd
-from sklearn.manifold import TSNE
+import umap
 
 
 def encode_onehot(x, categories):
@@ -21,7 +21,7 @@ def encode_onehot(x, categories):
 
 if __name__ == '__main__':
     # parse command-line arguments
-    parser = argparse.ArgumentParser(description='Visualize a dataset with t-SNE')
+    parser = argparse.ArgumentParser(description='Visualize a dataset with UMAP')
     parser.add_argument('--data', help='data file', required=True)
     parser.add_argument('--meta', help='metadata file', required=True)
     parser.add_argument('--outfile', help='output plot file', required=True)
@@ -42,10 +42,10 @@ if __name__ == '__main__':
     target = meta['target_names'][0]
     y = df[target]
 
-    # compute t-SNE embedding
-    x_tsne = TSNE().fit_transform(x)
+    # compute UMAP embedding
+    x_umap = umap.UMAP().fit_transform(x)   
 
-    # plot t-SNE embedding with class labels or colorbar
+    # plot UMAP embedding with class labels or colorbar
     plt.axis('off')
 
     if target in meta['categories']:
@@ -53,13 +53,13 @@ if __name__ == '__main__':
 
         for c in classes:
             indices = (y == c)
-            plt.scatter(x_tsne[indices, 0], x_tsne[indices, 1], label=c, edgecolors='w')
+            plt.scatter(x_umap[indices, 0], x_umap[indices, 1], label=c, edgecolors='w')
 
         plt.subplots_adjust(right=0.70)
         plt.legend(loc='upper left', bbox_to_anchor=(1, 1))
 
     else:
-        plt.scatter(x_tsne[:, 0], x_tsne[:, 1], c=y, edgecolors='w')
+        plt.scatter(x_umap[:, 0], x_umap[:, 1], c=y, edgecolors='w')
         plt.colorbar()
 
     plt.savefig(args.outfile)
