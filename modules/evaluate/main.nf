@@ -1,10 +1,10 @@
 
-process predict {
+process EVALUATE {
     publishDir params.outdir, mode: 'copy', saveAs: { file -> "${dataset_name}.${model_type}.${file}" }
     tag "${dataset_name}/${model_type}"
 
     input:
-    tuple val(dataset_name), val(model_type), path(model_file), path(data_file), path(meta_file)
+    tuple val(dataset_name), val(model_type), path(model_file), path(meta_file), path(data_file)
 
     output:
     tuple val(dataset_name), val(model_type), path('score.json'), emit: scores
@@ -12,7 +12,7 @@ process predict {
 
     script:
     """
-    predict.py \
+    evaluate.py \
         --model ${model_file} \
         --data  ${data_file} \
         --meta  ${meta_file}

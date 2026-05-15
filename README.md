@@ -22,10 +22,10 @@ A proof-of-concept pipeline for performing hyperparameter optimization of machin
 
     ```bash
     # use conda natively (requires Conda)
-    ./nextflow run nextflow-io/hyperopt -profile conda
+    ./nextflow run nextflow-io/hyperopt -profile test,conda
 
     # use Wave containers (requires Docker)
-    ./nextflow run nextflow-io/hyperopt -profile wave
+    ./nextflow run nextflow-io/hyperopt -profile test,wave
     ```
 
 3. When the pipeline completes, you can view the training and prediction results in the `results` folder.
@@ -39,20 +39,18 @@ A proof-of-concept pipeline for performing hyperparameter optimization of machin
 
 The hyperopt pipeline consists of the following steps:
 
-1. Download a dataset
-2. Split the dataset into train/test sets
+1. Prepare train/test splits from OpenML or user-provided datasets
 3. Visualize the train/test sets
-4. Train a variety of models on the training set
-5. Evaluate each model on the test set
-6. Select the best model based on evaluation score
+4. Train a variety of models on each training set
+5. Evaluate each model against each test set
+6. Report the best model for each dataset based on evaluation score
 
 You can control many aspects of this workflow with the pipeline parameters, including:
 
-* Enable/disable each individual step
-* Download a different dataset (default is `wdbc`, see [OpenML.org](https://www.openml.org/search?type=data&status=active) to view available datasets)
-* Provide your own training data instead of downloading it
-* Provide your own pre-trained model and test data
-* Select different models (see the `train` module for all available options)
+* Download any number of datasets from [OpenML.org](https://www.openml.org/search?type=data&status=active) (default is `wdbc`)
+* Evaluate against a number of model types (default is `dummy,gb,lr,mlp,rf`)
+* Provide your own train/test splits
+* Provide your own pre-trained models
 
 See the `nextflow.config` file for the list of pipeline parameters.
 

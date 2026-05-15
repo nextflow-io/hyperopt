@@ -2,90 +2,109 @@
 
 nextflow.enable.moduleBinaries = true
 
-include { fetch_dataset } from './modules/fetch_dataset'
-include { split_train_test } from './modules/split_train_test'
-include { visualize } from './modules/visualize'
-include { train } from './modules/train'
-include { predict } from './modules/predict'
+include { FETCH_DATASET } from './modules/fetch_dataset'
+include { SPLIT_TRAIN_TEST } from './modules/split_train_test'
+include { VISUALIZE as VISUALIZE_TRAIN } from './modules/visualize'
+include { VISUALIZE as VISUALIZE_TEST } from './modules/visualize'
+include { TRAIN } from './modules/train'
+include { EVALUATE } from './modules/evaluate'
 
+
+/*
+ * Pipeline parameters. They can be overriden on the command line,
+ * e.g. `--fetch_datasets some_value`.
+ */
+params.fetch_datasets = null
+params.train_test_splits = null
+params.train_models = null
+params.pretrained_models = null
+params.outdir = 'results'
 
 /* 
  * entry workflow
  */
 workflow {
     log.info """\
-      M L - H Y P E R O P T   P I P E L I N E
-      =======================================
-      fetch_dataset   : ${params.fetch_dataset}
-      dataset_name    : ${params.dataset_name}
-
-      visualize       : ${params.visualize}
-
-      train           : ${params.train}
-      train_data      : ${params.train_data}
-      train_meta      : ${params.train_meta}
-      train_models    : ${params.train_models}
-
-      predict         : ${params.predict}
-      predict_models  : ${params.predict_models}
-      predict_data    : ${params.predict_data}
-      predict_meta    : ${params.predict_meta}
-
-      outdir          : ${params.outdir}
+      H Y P E R O P T   P I P E L I N E
+      =================================
+      fetch_datasets    : ${params.fetch_datasets}
+      train_test_splits : ${params.train_test_splits}
+      train_models      : ${params.train_models}
+      pretrained_models : ${params.pretrained_models}
+      outdir            : ${params.outdir}
     """.stripIndent()
 
-    // fetch dataset if specified
-    if ( params.fetch_dataset ) {
-        ch_datasets = fetch_dataset(params.dataset_name)
-
-        (ch_train_datasets, ch_predict_datasets) = split_train_test(ch_datasets)
+    // fetch and split datasets if specified
+    if( params.fetch_datasets != null ) {
+        ch_dataset_names = channel.fromList(params.fetch_datasets.tokenize(','))
+        ch_datasets = FETCH_DATASET(ch_dataset_names)
+        ch_train_test_splits = SPLIT_TRAIN_TEST(ch_datasets)
     }
 
-    // otherwise load input files
+    // otherwise load custom train/test splits
+    else if( params.train_test_splits != null ) {
+        ch_datasets = channel.empty()
+        ch_train_test_splits = channel.of(file(params.train_test_splits))
+            .flatMap { json -> json.splitJson() }
+            .map { r ->
+                tuple(r.dataset_name, file(r.meta), file(r.data_train), file(r.data_test))
+            }
+    }
+
     else {
-        ch_train_data = channel.fromFilePairs(params.train_data, size: 1, flat: true)
-        ch_train_meta = channel.fromFilePairs(params.train_meta, size: 1, flat: true)
-        ch_train_datasets = ch_train_data.join(ch_train_meta)
-
-        ch_predict_data = channel.fromFilePairs(params.predict_data, size: 1, flat: true)
-        ch_predict_meta = channel.fromFilePairs(params.predict_meta, size: 1, flat: true)
-        ch_predict_datasets = ch_predict_data.join(ch_predict_meta)
+        error "Either `--fetch_datasets` or `--train_test_splits` must be provided (run with `-profile test` to use default test data)"
     }
 
-    // visualize train/test sets
-    if ( params.visualize ) {
-        visualize(ch_train_datasets.concat(ch_predict_datasets))
+    // separate training and test data
+    ch_train_datasets = ch_train_test_splits.map { dataset_name, meta, data_train, data_test ->
+        tuple(dataset_name, meta, data_train)
     }
+    ch_test_datasets = ch_train_test_splits.map { dataset_name, meta, data_train, data_test ->
+        tuple(dataset_name, meta, data_test)
+    }
+
+    // visualize train/test datasets
+    VISUALIZE_TRAIN(ch_train_datasets)
+    VISUALIZE_TEST(ch_test_datasets)
 
     // print warning if both training and pre-trained model are enabled
-    if ( params.train && params.predict_models != null ) {
-        log.warn 'Training is enabled but pre-trained model(s) are also provided, pre-trained models will be ignored'
+    if( params.train_models != null && params.pretrained_models != null ) {
+        log.warn 'Pre-trained model(s) were provided but training is also enabled -- pre-trained models will be ignored'
     }
 
-    // perform training if specified
-    if ( params.train ) {
-        (ch_models, ch_train_logs) = train(ch_train_datasets, params.train_models)
+    // train new models if specified
+    if( params.train_models != null ) {
+        model_types = params.train_models.tokenize(',')
+        (ch_models, ch_train_logs) = TRAIN(ch_train_datasets, model_types)
     }
 
-    // otherwise load trained model if specified
-    else if ( params.predict_models != null ) {
-        ch_models = channel.fromFilePairs(params.predict_models, size: 1, flat: true)
-            .map { [it[0], 'pretrained', it[1]] }
-    }
-
-    // perform inference if specified
-    if ( params.predict ) {
-        ch_predict_inputs = ch_models.combine(ch_predict_datasets, by: 0)
-        (ch_scores, ch_predict_logs) = predict(ch_predict_inputs)
-
-        // select the best model based on inference score
-        ch_scores
-            .max {
-                new groovy.json.JsonSlurper().parse(it[2])['value']
-            }
-            .subscribe { dataset_name, model_type, score_file ->
-                def score = new groovy.json.JsonSlurper().parse(score_file)
-                println "The best model for \'${dataset_name}\' was \'${model_type}\', with ${score.name} = ${String.format('%.3f', score.value)}"
+    // otherwise load pretrained models if specified
+    else if( params.pretrained_models != null ) {
+        ch_models = channel.of(file(params.pretrained_models))
+            .flatMap { json -> json.splitJson() }
+            .map { r ->
+                tuple(r.dataset_name, r.model_type, file(r.model))
             }
     }
+
+    else {
+        error "Either `--train_models` or `--pretrained_models` must be provided (run with `-profile test` to use default test data)"
+    }
+
+    // evaluate each model against test dataset
+    ch_evaluate_inputs = ch_models.combine(ch_test_datasets, by: 0)
+    (ch_scores, ch_test_logs) = EVALUATE(ch_evaluate_inputs)
+
+    // report the best model for each dataset based on evaluation score
+    ch_scores
+        .max { it -> fromJson(it[2]).value }
+        .subscribe { dataset_name, model_type, score_file ->
+            def score = fromJson(score_file)
+            printf "The best model for dataset '${dataset_name}' was '${model_type}' (${score.name} = %.3f)\n", score.value
+        }
+}
+
+
+def fromJson(file) {
+    return new groovy.json.JsonSlurper().parse(file)
 }

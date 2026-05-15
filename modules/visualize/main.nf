@@ -1,12 +1,12 @@
 
-process visualize {
+process VISUALIZE {
     publishDir params.outdir, mode: 'copy', saveAs: { file -> "${dataset_name}.${file}" }
 
     input:
-    tuple val(dataset_name), path(data_file), path(meta_file)
+    tuple val(dataset_name), path(meta_file), path(data_file)
 
     output:
-    tuple val(dataset_name), path('*.png'), emit: plots
+    tuple val(dataset_name), path('*.png')
 
     script:
     """

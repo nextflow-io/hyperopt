@@ -42,7 +42,7 @@ jobs:
 
       - name: Tests
         run: |
-          nextflow run . -profile wave
+          nextflow run . -profile test,wave
         env:
           NXF_ANSI_LOG: false
 

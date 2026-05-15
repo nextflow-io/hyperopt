@@ -1,5 +1,5 @@
 
-process fetch_dataset {
+process FETCH_DATASET {
     publishDir params.outdir, mode: 'copy', saveAs: { file -> "${dataset_name}.${file}" }
     tag "${dataset_name}"
 
@@ -7,7 +7,7 @@ process fetch_dataset {
     val(dataset_name)
 
     output:
-    tuple val(dataset_name), path('data.txt'), path('meta.json'), emit: datasets
+    tuple val(dataset_name), path('meta.json'), path('data.txt')
 
     script:
     """

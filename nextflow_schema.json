@@ -12,41 +12,29 @@
           "default": "",
           "fa_icon": "fas fa-terminal",
           "properties": {
-              "fetch_dataset": {
-                  "type": "boolean",
-                  "description": "Fetch a dataset by name from OpenML",
-                  "default": true,
-                  "fa_icon": "fas fa-download"
-              },
-              "dataset_name": {
+              "fetch_datasets": {
                   "type": "string",
-                  "description": "Name of dataset to fetch from OpenML",
+                  "description": "Comma-separated list of datasets to fetch from OpenML",
                   "default": "wdbc",
                   "fa_icon": "fas fa-file-csv"
               },
-              "visualize": {
-                  "type": "boolean",
-                  "description": "Visualize the training and test sets",
-                  "default": true,
-                  "fa_icon": "fas fa-chart-line"
-              },
-              "datadir": {
+              "train_test_splits": {
                   "type": "string",
-                  "description": "Directory that contains any input datasets and pre-trained models",
-                  "default": "data",
-                  "fa_icon": "fas fa-folder-open"
+                  "format": "file-path",
+                  "description": "Index file of train/test splits to use for evaluation",
+                  "fa_icon": "fas fa-file-csv"
               },
-              "train": {
-                  "type": "boolean",
-                  "description": "Train a set of models on the given training set(s)",
-                  "default": true,
+              "train_models": {
+                  "type": "string",
+                  "description": "Comma-separated list of model types to train and evaluate (any of: dummy,gb,lr,mlp,rf)",
+                  "default": "dummy,gb,lr,mlp,rf",
                   "fa_icon": "fas fa-dumbbell"
               },
-              "predict": {
-                  "type": "boolean",
-                  "description": "Evaluate a set of trained models on the given test set(s)",
-                  "default": true,
-                  "fa_icon": "fas fa-balance-scale-right"
+              "pretrained_models": {
+                  "type": "string",
+                  "format": "file-path",
+                  "description": "Index file of pre-trained models to evaluate",
+                  "fa_icon": "fas fa-dumbbell"
               },
               "outdir": {
                   "type": "string",

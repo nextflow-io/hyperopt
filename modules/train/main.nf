@@ -1,10 +1,10 @@
 
-process train {
+process TRAIN {
     publishDir params.outdir, mode: 'copy', saveAs: { file -> "${dataset_name}.${model_type}.${file}" }
     tag "${dataset_name}/${model_type}"
 
     input:
-    tuple val(dataset_name), path(data_file), path(meta_file)
+    tuple val(dataset_name), path(meta_file), path(data_file)
     each model_type
 
     output:
