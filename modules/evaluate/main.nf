@@ -16,8 +16,7 @@ process EVALUATE {
     record(
         model_type: model_type,
         dataset_name: dataset_name,
-        score: new groovy.json.JsonSlurper().parse(file('score.json')) as Map,
-        // score: fromJson(file('score.json')) as Map,
+        score: fromJson(file('score.json')) as Map,
         logs: file('evaluate.log'),
     )
 
