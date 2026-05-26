@@ -11,12 +11,12 @@ jobs:
   build:
     name: hyperopt ci
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
         java_version: ['17']
-        nextflow_version: ['25.10']
+        nextflow_version: ['26.04']
 
     steps:
       - name: Environment

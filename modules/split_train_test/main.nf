@@ -1,16 +1,25 @@
+nextflow.enable.types = true
 
 process SPLIT_TRAIN_TEST {
-    publishDir params.outdir, mode: 'copy', saveAs: { file -> "${dataset_name}.${file}" }
-    tag "${dataset_name}"
+    tag dataset_name
 
     input:
-    tuple val(dataset_name), path(meta_file), path(data_file)
+    record(
+        dataset_name: String,
+        meta: Path,
+        data: Path
+    )
 
     output:
-    tuple val(dataset_name), path(meta_file), path('train.txt'), path('test.txt')
+    record(
+        dataset_name: dataset_name,
+        meta: meta,
+        data_train: file('train.txt'),
+        data_test: file('test.txt'),
+    )
 
     script:
     """
-    split-train-test.py --data ${data_file}
+    split-train-test.py --data ${data}
     """
 }

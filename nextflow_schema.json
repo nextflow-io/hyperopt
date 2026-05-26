@@ -35,12 +35,6 @@
                   "format": "file-path",
                   "description": "Index file of pre-trained models to evaluate",
                   "fa_icon": "fas fa-dumbbell"
-              },
-              "outdir": {
-                  "type": "string",
-                  "description": "Directory to publish output data",
-                  "default": "results",
-                  "fa_icon": "fas fa-folder-open"
               }
           }
       }

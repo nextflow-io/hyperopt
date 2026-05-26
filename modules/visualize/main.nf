@@ -1,18 +1,28 @@
+nextflow.enable.types = true
 
 process VISUALIZE {
-    publishDir params.outdir, mode: 'copy', saveAs: { file -> "${dataset_name}.${file}" }
+    tag data.name
 
     input:
-    tuple val(dataset_name), path(meta_file), path(data_file)
+    record(
+        dataset_name: String,
+        meta: Path,
+        data: Path
+    )
 
     output:
-    tuple val(dataset_name), path('*.png')
+    record(
+        dataset_name: dataset_name,
+        meta: meta,
+        data: data,
+        plot: file('*.png'),
+    )
 
     script:
     """
     visualize.py \
-        --data    ${data_file} \
-        --meta    ${meta_file} \
-        --outfile `basename ${data_file} .txt`.png
+        --data    ${data} \
+        --meta    ${meta} \
+        --outfile `basename ${data} .txt`.png
     """
 }

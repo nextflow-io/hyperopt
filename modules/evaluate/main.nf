@@ -1,20 +1,38 @@
+nextflow.enable.types = true
 
 process EVALUATE {
-    publishDir params.outdir, mode: 'copy', saveAs: { file -> "${dataset_name}.${model_type}.${file}" }
     tag "${dataset_name}/${model_type}"
 
     input:
-    tuple val(dataset_name), val(model_type), path(model_file), path(meta_file), path(data_file)
+    record(
+        model_type: String,
+        model: Path,
+        dataset_name: String,
+        data: Path,
+        meta: Path
+    )
 
     output:
-    tuple val(dataset_name), val(model_type), path('score.json'), emit: scores
-    tuple val(dataset_name), val(model_type), stdout, emit: logs
+    record(
+        model_type: model_type,
+        dataset_name: dataset_name,
+        score: fromJson(file('score.json')) as Map,
+        logs: file('evaluate.log'),
+    )
 
     script:
     """
     evaluate.py \
-        --model ${model_file} \
-        --data  ${data_file} \
-        --meta  ${meta_file}
+        --model ${model} \
+        --data  ${data} \
+        --meta  ${meta} \
+        > evaluate.log
     """
+}
+
+/*
+ * Load data from a JSON file
+ */
+def fromJson(file: Path) {
+    return new groovy.json.JsonSlurper().parse(file)
 }
