@@ -1,4 +1,4 @@
-#!/usr/bin/env nextflow 
+#!/usr/bin/env nextflow
 
 nextflow.enable.moduleBinaries = true
 nextflow.enable.types = true
@@ -22,7 +22,7 @@ params {
     pretrained_models: Path?
 }
 
-/* 
+/*
  * entry workflow
  */
 workflow {
@@ -89,7 +89,6 @@ workflow {
     }
 
     // train new models if specified
-    def ch_models: Channel<Model>
     if( params.train_models != null ) {
         model_types = params.train_models.tokenize(',')
         ch_train_inputs = ch_train_datasets.flatMap { r ->
@@ -108,7 +107,8 @@ workflow {
                 record(
                     dataset_name: r.dataset_name as String,
                     model_type: r.model_type as String,
-                    model: file(r.model, checkIfExists: true)
+                    model: file(r.model, checkIfExists: true),
+                    logs: null
                 )
             }
     }
