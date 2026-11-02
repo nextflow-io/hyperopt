@@ -1,4 +1,4 @@
-#!/usr/bin/env nextflow 
+#!/usr/bin/env nextflow
 
 nextflow.enable.moduleBinaries = true
 nextflow.enable.types = true
@@ -22,7 +22,7 @@ params {
     pretrained_models: Path?
 }
 
-/* 
+/*
  * entry workflow
  */
 workflow {
@@ -107,7 +107,8 @@ workflow {
                 record(
                     dataset_name: r.dataset_name as String,
                     model_type: r.model_type as String,
-                    model: file(r.model, checkIfExists: true)
+                    model: file(r.model, checkIfExists: true),
+                    logs: null
                 )
             }
     }
