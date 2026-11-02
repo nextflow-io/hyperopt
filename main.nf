@@ -89,6 +89,7 @@ workflow {
     }
 
     // train new models if specified
+    def ch_models: Channel<Model>
     if( params.train_models != null ) {
         model_types = params.train_models.tokenize(',')
         ch_train_inputs = ch_train_datasets.flatMap { r ->
