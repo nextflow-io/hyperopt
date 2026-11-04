@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://raw.githubusercontent.com/nextflow-io/hyperopt/master/nextflow_schema.json",
+  "title": "hyperopt pipeline parameters",
+  "description": "Proof-of-concept pipeline for training and evaluating machine learning models with Nextflow. Not all parameters are included in this schema, refer to the nextflow.config for more details.",
+  "type": "object",
+  "definitions": {
+      "pipeline_options": {
+          "title": "Pipeline options",
+          "type": "object",
+          "description": "",
+          "default": "",
+          "fa_icon": "fas fa-terminal",
+          "properties": {
+              "fetch_datasets": {
+                  "type": "string",
+                  "description": "Comma-separated list of datasets to fetch from OpenML",
+                  "default": "wdbc",
+                  "fa_icon": "fas fa-file-csv"
+              },
+              "train_test_splits": {
+                  "type": "string",
+                  "format": "file-path",
+                  "description": "Index file of train/test splits to use for evaluation",
+                  "fa_icon": "fas fa-file-csv"
+              },
+              "train_models": {
+                  "type": "string",
+                  "description": "Comma-separated list of model types to train and evaluate (any of: dummy,gb,lr,mlp,rf)",
+                  "default": "dummy,gb,lr,mlp,rf",
+                  "fa_icon": "fas fa-dumbbell"
+              },
+              "pretrained_models": {
+                  "type": "string",
+                  "format": "file-path",
+                  "description": "Index file of pre-trained models to evaluate",
+                  "fa_icon": "fas fa-dumbbell"
+              }
+          }
+      }
+  },
+  "allOf": [
+      {
+          "$ref": "#/definitions/pipeline_options"
+      }
+  ]
+}

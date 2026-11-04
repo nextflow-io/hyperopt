@@ -1,0 +1,55 @@
+name: hyperopt
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+    types: [opened, reopened, synchronize]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: hyperopt ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        java_version: ['17']
+        nextflow_version: ['26.10']
+
+    steps:
+      - name: Environment
+        run: env | sort
+
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # ratchet:actions/checkout@v4
+        with:
+          fetch-depth: 1
+          submodules: true
+
+      - name: Setup Java
+        uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # ratchet:actions/setup-java@v4
+        with:
+          java-version: ${{ matrix.java_version }}
+          distribution: 'temurin'
+          architecture: x64
+
+      - name: Setup Nextflow ${{ matrix.nextflow_version }}
+        uses: nf-core/setup-nextflow@b9f764e8ba5c76b712ace14ecbfcef0e40ae2dd8 # v1
+        with:
+          version: "${{ matrix.nextflow_version }}"
+
+      - name: Tests
+        run: |
+          nextflow run . -profile test,wave
+        env:
+          NXF_ANSI_LOG: false
+
+      - name: Upload logs
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # ratchet:actions/upload-artifact@v4
+        if: always()
+        with:
+          name: nextflow-logs-${{ matrix.nextflow_version }}-${{ matrix.java_version }}
+          path: |
+            .nextflow.*

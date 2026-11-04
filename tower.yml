@@ -1,0 +1,11 @@
+reports:
+  "*.data.txt":
+    display: "Input datasets"
+  "*.train.txt":
+    display: "Training data"
+  "*.test.txt":
+    display: "Test data"
+  "*.png":
+    display: "t-SNE plots"
+  "*.score.json":
+    display: "Evaluation scores"
